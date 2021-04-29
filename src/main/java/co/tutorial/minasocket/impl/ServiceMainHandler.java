@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class ServiceMainHandler extends IoHandlerAdapter {
 
-	private static final  Logger logger = LoggerFactory.getLogger(FixedStringDecoder.class);
+	private static final  Logger logger = LoggerFactory.getLogger(ServiceMainHandler.class);
 
 	/**
 	 * 当一个新客户端连接后触发此方法 
