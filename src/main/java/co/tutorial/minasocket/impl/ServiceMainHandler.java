@@ -48,7 +48,7 @@ public class ServiceMainHandler extends IoHandlerAdapter {
 		logger.debug("服务端接收到来自IP:" + clientIP + "的消息:" + message);
 		// 发送完毕后关闭连接
 		WriteFuture future=
-				session.write("在这里实现业务逻辑\n");
+				session.write("这里处理业务逻辑");
 		future.addListener(IoFutureListener.CLOSE);
 	}
 

@@ -123,13 +123,13 @@ public class FixedStringEncoder extends ProtocolEncoderAdapter {
 		int allLen = bodyLen + this.getPrefixLength();
 
 		String SendMsg = headContent + value;
-		logger.debug("要发送的最终内容:" + SendMsg);
-		logger.debug("要发送的最终内容长度:" + SendMsg.length());
+		logger.debug("要发送的最终内容:{}",SendMsg);
+		logger.debug("要发送的最终内容长度:{}",SendMsg.length());
 
 		IoBuffer buffer = IoBuffer.allocate(allLen).setAutoExpand(true);
 		buffer.putString(SendMsg, charset.newEncoder());
 
-		logger.debug("要发送的buff长度:" + buffer.position());
+		logger.debug("要发送的buff长度:{}",buffer.position());
 
 		if (buffer.position() > maxDataLength) {
 			throw new IllegalArgumentException("Data length: " + buffer.position());

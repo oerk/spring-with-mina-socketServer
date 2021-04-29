@@ -13,11 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 public class FixedStringDecoder extends CumulativeProtocolDecoder {
-	
-	private static final  Logger logger = LoggerFactory.getLogger(FixedStringDecoder.class);
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(FixedStringDecoder.class);
+
 	/** The default length for the prefix */
 	public static final int DEFAULT_PREFIX_LENGTH = 4;
 
@@ -30,7 +29,6 @@ public class FixedStringDecoder extends CumulativeProtocolDecoder {
 
 	private int maxDataLength = DEFAULT_MAX_DATA_LENGTH;
 
-	
 	/**
 	 * Creates a new PrefixedStringDecoder instance
 	 * 
@@ -111,36 +109,43 @@ public class FixedStringDecoder extends CumulativeProtocolDecoder {
 	 */
 	@Override
 	protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
-		logger.debug("消息长度总长 len = " + in.remaining());
-		
+		logger.debug("消息长度总长 len = {}",in.remaining());
+
 		in.mark();
 		if (in.remaining() < this.getPrefixLength()) {
 			logger.debug("消息长度总长 小于消息头长报文不完整重新读取");
-			 //代表报文不完整，需要再次读取缓冲区的数据
+			// 代表报文不完整，需要再次读取缓冲区的数据
 			in.reset();
 			return false;
 		}
-		
-		logger.debug("消息长度总长 len = " + in.remaining());
+
+		logger.debug("消息长度总长 len = {}", in.remaining());
 
 		String headerLen = in.getString(this.getPrefixLength(), this.charset.newDecoder());
 		int bodyLen = Integer.valueOf(headerLen);
-		
+
 		if (in.remaining() < bodyLen) {
 			logger.debug("消息体度总不完整重新读取");
-			 //代表报文不完整，需要再次读取缓冲区的数据
+			// 代表报文不完整，需要再次读取缓冲区的数据
 			in.reset();
 			return false;
 		}
-		
-		
-		logger.debug("解析的请求报文长度为:" + bodyLen);
-		String msg = in.getString(bodyLen, this.charset.newDecoder());
-		logger.debug("丢弃剩余内容长 len = " + in.remaining());
-		//如果内容长度超过报文头的长度丢弃
-		if(in.remaining() >0) {
-			String dropString =in.getString(in.remaining(), this.charset.newDecoder());
-			logger.debug("丢弃剩余内容:" + dropString);
+
+		logger.debug("解析的请求报文长度为:{}", bodyLen);
+
+		// 按编码转换为字符串
+		String msg = in.getString(in.remaining(), this.charset.newDecoder());
+
+		if (bodyLen > msg.length()) {
+			in.reset();
+			logger.debug("当前字符串长度:{}小于内容长度:{},等待读取更多内容", msg.length(), bodyLen);
+			return false;
+		}
+
+		// 如果内容长度超过报文头的长度丢弃
+		if (in.remaining() > 0) {
+			String dropString = in.getString(in.remaining(), this.charset.newDecoder());
+			logger.debug("丢弃剩余内容:{}", dropString);
 		}
 		out.write(msg);
 		return true;
