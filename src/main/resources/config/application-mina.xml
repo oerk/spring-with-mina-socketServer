@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="customEditorConfigurer"
+		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="java.net.SocketAddress"
+					value="org.apache.mina.integration.beans.InetSocketAddressEditor" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- handlers事件 -->
+	<bean id="IoHandler"
+		class="co.tutorial.minasocket.impl.ServiceMainHandler"></bean>
+
+
+	<!-- 消息过滤器组装 -->
+	<!-- 编码解码字符类型 消息头占用字符长度 -->
+	<bean id="FixedStringCodecFactory"
+		class="co.tutorial.minasocket.impl.FixedStringCodecFactory">
+		<constructor-arg index="0"
+			value="#{T(java.nio.charset.StandardCharsets).UTF_8}" />
+		<constructor-arg index="1" value="8" />
+	</bean>
+
+	<!--filter -->
+	<bean id="FixedStringFilter"
+		class="org.apache.mina.filter.codec.ProtocolCodecFilter">
+		<constructor-arg index="0"
+			ref="FixedStringCodecFactory" />
+	</bean>
+
+
+	<bean id="loggingFilter"
+		class="org.apache.mina.filter.logging.LoggingFilter" />
+	<bean id="executorFilter"
+		class="org.apache.mina.filter.executor.ExecutorFilter" />
+	<bean id="mdcInjectionFilter"
+		class="org.apache.mina.filter.logging.MdcInjectionFilter" >
+	</bean>
+
+	<!-- The filter chain. -->
+	<bean id="filterChainBuilder"
+		class="org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder">
+		<property name="filters">
+			<map>
+				<entry key="loggingFilter" value-ref="loggingFilter" />
+				<entry key="mdcInjectionFilter" value-ref="mdcInjectionFilter" />
+				<entry key="codecFilter" value-ref="FixedStringFilter" />
+			</map>
+		</property>
+	</bean>
+
+
+	<bean id="ioAcceptor"
+		class="org.apache.mina.transport.socket.nio.NioSocketAcceptor"
+		init-method="bind" destroy-method="unbind">
+		<property name="defaultLocalAddress" value="10200" />
+		<property name="handler" ref="IoHandler" />
+		<property name="filterChainBuilder" ref="filterChainBuilder" />
+	</bean>
+
+
+
+</beans>
