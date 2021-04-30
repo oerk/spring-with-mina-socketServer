@@ -21,7 +21,7 @@ public class FixedStringDecoder extends CumulativeProtocolDecoder {
 	public static final int DEFAULT_PREFIX_LENGTH = 4;
 
 	/** The default maximum data length */
-	public static final int DEFAULT_MAX_DATA_LENGTH = 2048;
+	public static final int DEFAULT_MAX_DATA_LENGTH = (int) (Math.pow(10, DEFAULT_PREFIX_LENGTH) - 1);;
 
 	private final Charset charset;
 
@@ -29,6 +29,11 @@ public class FixedStringDecoder extends CumulativeProtocolDecoder {
 
 	private int maxDataLength = DEFAULT_MAX_DATA_LENGTH;
 
+	
+	public int calculatMaxDataLength(int prefixLength) {
+		return (int) (Math.pow(10, prefixLength) - 1);
+	}
+	
 	/**
 	 * Creates a new PrefixedStringDecoder instance
 	 * 
@@ -39,7 +44,7 @@ public class FixedStringDecoder extends CumulativeProtocolDecoder {
 	public FixedStringDecoder(Charset charset, int prefixLength, int maxDataLength) {
 		this.charset = charset;
 		this.prefixLength = prefixLength;
-		this.maxDataLength = (int) (Math.pow(10, prefixLength) - 1);
+		this.maxDataLength = calculatMaxDataLength(prefixLength) ;
 	}
 
 	/**
@@ -64,14 +69,15 @@ public class FixedStringDecoder extends CumulativeProtocolDecoder {
 	/**
 	 * Sets the number of bytes used by the length prefix
 	 *
-	 * @param prefixLength the length of the length prefix (1, 2, or 4)
+	 * @param prefixLength the length of the length prefix (
 	 */
 	public void setPrefixLength(int prefixLength) {
 		this.prefixLength = prefixLength;
+		this.setMaxDataLength( calculatMaxDataLength(prefixLength) );
 	}
 
 	/**
-	 * Gets the length of the length prefix (1, 2, or 4)
+	 * Gets the length of the length prefix 
 	 *
 	 * @return length of the length prefix
 	 */

@@ -16,7 +16,7 @@ public class ClientHandler extends IoHandlerAdapter{
      */
     @Override
     public void sessionOpened(IoSession session) throws Exception {
-        session.write("客户端会话打开时间:"+new Date());
+        logger.debug("客户端会话打开时间:"+new Date());
     }
     
     @Override

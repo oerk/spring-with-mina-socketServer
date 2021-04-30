@@ -27,6 +27,13 @@
 		<constructor-arg index="1" value="8" />
 	</bean>
 
+	<bean id="PrefixedStringCodecFactory"
+		class="org.apache.mina.filter.codec.prefixedstring.PrefixedStringCodecFactory">
+		<constructor-arg index="0"
+			value="#{T(java.nio.charset.StandardCharsets).UTF_8}" />
+	</bean>
+
+
 	<!--filter -->
 	<bean id="FixedStringFilter"
 		class="org.apache.mina.filter.codec.ProtocolCodecFilter">
@@ -34,6 +41,12 @@
 			ref="FixedStringCodecFactory" />
 	</bean>
 
+
+	<bean id="PreFixedStringFilter"
+		class="org.apache.mina.filter.codec.ProtocolCodecFilter">
+		<constructor-arg index="0"
+			ref="PrefixedStringCodecFactory" />
+	</bean>
 
 	<bean id="loggingFilter"
 		class="org.apache.mina.filter.logging.LoggingFilter" />
@@ -51,6 +64,7 @@
 				<entry key="loggingFilter" value-ref="loggingFilter" />
 				<entry key="mdcInjectionFilter" value-ref="mdcInjectionFilter" />
 				<entry key="codecFilter" value-ref="FixedStringFilter" />
+				<!-- <entry key="codecFilter" value-ref="PreFixedStringFilter" /> -->
 			</map>
 		</property>
 	</bean>
