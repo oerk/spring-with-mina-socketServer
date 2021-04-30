@@ -101,13 +101,19 @@ public class CustPrefixedStringDecoder extends PrefixedStringDecoder {
 
 		int prefixLength = calculatprefixLength(this.getPrefixWidth());
 		if (buffer.prefixedDataAvailable(prefixLength, this.getMaxDataLength())) {
-			String msg = buffer.getPrefixedString(prefixLength, MyCharset.newDecoder());
-			if(msg.length() < bodyLen) {
+			String text = buffer.getPrefixedString(prefixLength, MyCharset.newDecoder());
+			int textLen = text.length();
+			if(textLen < bodyLen) {
 				in.reset();
 				return false;
 			}
-			logger.debug("解析后的消息:[{}]",msg);
-			out.write(msg);
+			if(textLen > bodyLen) {
+				logger.debug("收到的长度为:{},执行截断消息",textLen);
+				text = text.substring(0, bodyLen);
+			}
+			
+			logger.debug("解析后的消息:[{}]",text);
+			out.write(text);
 			return true;
 		}
 
