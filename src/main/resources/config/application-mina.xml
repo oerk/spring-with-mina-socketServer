@@ -17,27 +17,28 @@
 	<bean id="IoHandler"
 		class="co.tutorial.minasocket.impl.ServiceMainHandler"></bean>
 
-
+	<!-- 中文填写GBK -->
+ 	<bean name="Charset" class="java.nio.charset.Charset"  factory-method="forName">
+ 	 	<constructor-arg index="0" value="UTF-8" />
+	</bean>
+	
 	<!-- 消息过滤器组装 -->
 	<!-- 编码解码字符类型 消息头占用字符长度 -->
 	<bean id="FixedStringCodecFactory"
 		class="co.tutorial.minasocket.impl.FixedStringCodecFactory">
-		<constructor-arg index="0"
-			value="#{T(java.nio.charset.StandardCharsets).UTF_8}" />
+		<constructor-arg index="0" ref="Charset" />
 		<constructor-arg index="1" value="8" />
 	</bean>
 
 	<bean id="CustPrefixedStringCodecFactory"
-		class="co.tutorial.minasocket.impl.CustPrefixedStringCodecFactory">
-		<constructor-arg index="0"
-			value="#{T(java.nio.charset.StandardCharsets).UTF_8}" />
+		class="co.tutorial.minasocket.impl.CustPrefixedStringCodecFactory">			
+		<constructor-arg index="0" ref="Charset" />
 		<constructor-arg index="1" value="8" />
 	</bean>
 
 	<bean id="PrefixedStringCodecFactory"
 		class="org.apache.mina.filter.codec.prefixedstring.PrefixedStringCodecFactory">
-		<constructor-arg index="0"
-			value="#{T(java.nio.charset.StandardCharsets).UTF_8}" />
+			<constructor-arg index="0" ref="Charset" />
 	</bean>
 
 
