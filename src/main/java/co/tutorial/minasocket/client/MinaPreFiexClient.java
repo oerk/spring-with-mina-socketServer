@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
+import co.tutorial.minasocket.impl.CustPrefixedStringCodecFactory;
 import co.tutorial.minasocket.impl.FixedStringCodecFactory;
 
 public class MinaPreFiexClient {
@@ -34,7 +35,7 @@ public class MinaPreFiexClient {
 		// 设置连接超时时间 单位毫秒
 		connector.setConnectTimeoutMillis(30000);
 
-		IoFilter filter = new ProtocolCodecFilter(new PrefixedStringCodecFactory(Charset.forName("UTF-8")));
+		IoFilter filter = new ProtocolCodecFilter(new CustPrefixedStringCodecFactory(Charset.forName("UTF-8"),8));
 
 		connector.getFilterChain().addLast(" codec", filter);
 		connector.getFilterChain().addLast("logging", new LoggingFilter());
@@ -47,7 +48,7 @@ public class MinaPreFiexClient {
 			connect.awaitUninterruptibly();
 			// 获取session
 			session = connect.getSession();
-			session.write("123456789");
+			session.write("123456789啊");
 
 		} catch (Exception e) {
 			logger.error("客户端连接异常", e);

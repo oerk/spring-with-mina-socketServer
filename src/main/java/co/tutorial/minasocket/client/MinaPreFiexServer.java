@@ -16,6 +16,7 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import co.tutorial.minasocket.impl.CustPrefixedStringCodecFactory;
 import co.tutorial.minasocket.impl.ServiceMainHandler;
 
 
@@ -35,7 +36,7 @@ public class MinaPreFiexServer {
 	        acceptor.getSessionConfig().setWriteTimeout(20);
 
 	        //添加过滤器和日志组件
-	        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new PrefixedStringCodecFactory(Charset.forName( "UTF-8" ))));
+	        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new CustPrefixedStringCodecFactory(Charset.forName( "UTF-8" ),8)));
 
 	        acceptor.getFilterChain().addLast("logging", new LoggingFilter(logger.getClass()));
 

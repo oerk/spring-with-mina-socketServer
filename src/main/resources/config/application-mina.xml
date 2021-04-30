@@ -27,6 +27,13 @@
 		<constructor-arg index="1" value="8" />
 	</bean>
 
+	<bean id="CustPrefixedStringCodecFactory"
+		class="co.tutorial.minasocket.impl.CustPrefixedStringCodecFactory">
+		<constructor-arg index="0"
+			value="#{T(java.nio.charset.StandardCharsets).UTF_8}" />
+		<constructor-arg index="1" value="8" />
+	</bean>
+
 	<bean id="PrefixedStringCodecFactory"
 		class="org.apache.mina.filter.codec.prefixedstring.PrefixedStringCodecFactory">
 		<constructor-arg index="0"
@@ -48,6 +55,14 @@
 			ref="PrefixedStringCodecFactory" />
 	</bean>
 
+
+	<bean id="CustPreFixedStringFilter"
+		class="org.apache.mina.filter.codec.ProtocolCodecFilter">
+		<constructor-arg index="0"
+			ref="CustPrefixedStringCodecFactory" />
+	</bean>
+
+
 	<bean id="loggingFilter"
 		class="org.apache.mina.filter.logging.LoggingFilter" />
 	<bean id="executorFilter"
@@ -63,8 +78,10 @@
 			<map>
 				<entry key="loggingFilter" value-ref="loggingFilter" />
 				<entry key="mdcInjectionFilter" value-ref="mdcInjectionFilter" />
-				<entry key="codecFilter" value-ref="FixedStringFilter" />
+				<!-- <entry key="codecFilter" value-ref="FixedStringFilter" /> -->
 				<!-- <entry key="codecFilter" value-ref="PreFixedStringFilter" /> -->
+				<!-- CustPreFixedStringFilter  ==  FixedStringFilter -->
+				<entry key="codecFilter" value-ref="CustPreFixedStringFilter" />
 			</map>
 		</property>
 	</bean>

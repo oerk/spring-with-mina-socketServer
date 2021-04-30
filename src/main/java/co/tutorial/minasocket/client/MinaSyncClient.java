@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
+import co.tutorial.minasocket.impl.CustPrefixedStringCodecFactory;
 import co.tutorial.minasocket.impl.FixedStringCodecFactory;
 
 public class MinaSyncClient {
@@ -36,7 +37,7 @@ public class MinaSyncClient {
 		// IoFilter filter = new ProtocolCodecFilter(new
 		// TextLineCodecFactory(Charset.forName( "UTF-8" )));
 
-		IoFilter filter = new ProtocolCodecFilter(new FixedStringCodecFactory(Charset.forName("UTF-8"), 8));
+		IoFilter filter = new ProtocolCodecFilter(new CustPrefixedStringCodecFactory(Charset.forName("UTF-8"), 8));
 		connector.getFilterChain().addLast(" codec", filter);
 		connector.getFilterChain().addLast("logging", new LoggingFilter());
 		connector.getSessionConfig().setUseReadOperation(true);
@@ -49,7 +50,7 @@ public class MinaSyncClient {
 			connect.awaitUninterruptibly();
 			// 获取session
 			session = connect.getSession();
-			session.write("123456789");
+			session.write("123456789哈哈");
 			ReadFuture readFuture = session.read();
 
 			if (readFuture.awaitUninterruptibly(DEFAULT_BOTHIDLE_TIMEOUT, TimeUnit.SECONDS)) {
@@ -64,10 +65,11 @@ public class MinaSyncClient {
 			logger.error("客户端连接异常", e);
 		} finally {
 			if(session != null) {
+				logger.debug("关闭会话");
 				session.getCloseFuture().awaitUninterruptibly();
-				session.closeNow();
-				session.getService().dispose();
-				connector.dispose();
+				//session.closeNow();
+				//session.getService().dispose();
+				//connector.dispose();
 			}
 
 		}

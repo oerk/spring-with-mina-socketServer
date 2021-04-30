@@ -47,7 +47,7 @@ public class MinaClient {
 			connect.awaitUninterruptibly();
 			// 获取session
 			session = connect.getSession();
-			session.write("123456789就是中文最好用");
+			session.write("123456789大");
 
 		} catch (Exception e) {
 			logger.error("客户端连接异常", e);
