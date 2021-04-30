@@ -17,11 +17,11 @@ import java.util.concurrent.TimeUnit;
 
 import co.tutorial.minasocket.impl.FixedStringCodecFactory;
 
-public class MinaClient {
+public class MinaSyncClient {
 
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 10200;
-	private static final Logger logger = LoggerFactory.getLogger(MinaClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(MinaSyncClient.class);
 
 	private static final int DEFAULT_BOTHIDLE_TIMEOUT = 90; // 设置默认发呆时间为90s
 	private static final int DEFAULT_CONNECTION_TIMEOUT = 1000 * 2; // 设置默认连接超时为2s
@@ -39,6 +39,7 @@ public class MinaClient {
 		IoFilter filter = new ProtocolCodecFilter(new FixedStringCodecFactory(Charset.forName("UTF-8"), 8));
 		connector.getFilterChain().addLast(" codec", filter);
 		connector.getFilterChain().addLast("logging", new LoggingFilter());
+		connector.getSessionConfig().setUseReadOperation(true);
 
 		// 创建连接
 		IoSession session = null;
@@ -48,7 +49,16 @@ public class MinaClient {
 			connect.awaitUninterruptibly();
 			// 获取session
 			session = connect.getSession();
-			session.write("123456789就是中文最好用");
+			session.write("123456789");
+			ReadFuture readFuture = session.read();
+
+			if (readFuture.awaitUninterruptibly(DEFAULT_BOTHIDLE_TIMEOUT, TimeUnit.SECONDS)) {
+				// Get the received message
+				String respData = (String) readFuture.getMessage();
+				logger.info("同步读取返回：{}", respData);
+			} else {
+				logger.warn("读取[]超时");
+			}
 
 		} catch (Exception e) {
 			logger.error("客户端连接异常", e);

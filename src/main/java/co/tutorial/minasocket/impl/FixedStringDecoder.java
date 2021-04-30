@@ -109,7 +109,7 @@ public class FixedStringDecoder extends CumulativeProtocolDecoder {
 	 */
 	@Override
 	protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
-		logger.debug("消息长度总长 len = {}",in.remaining());
+		logger.debug("decode buff总长 len = {}",in.remaining());
 
 		in.mark();
 		if (in.remaining() < this.getPrefixLength()) {
@@ -118,8 +118,6 @@ public class FixedStringDecoder extends CumulativeProtocolDecoder {
 			in.reset();
 			return false;
 		}
-
-		logger.debug("消息长度总长 len = {}", in.remaining());
 
 		String headerLen = in.getString(this.getPrefixLength(), this.charset.newDecoder());
 		int bodyLen = Integer.valueOf(headerLen);
