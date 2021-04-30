@@ -47,7 +47,29 @@ public class FixedStringCodecFactory implements ProtocolCodecFactory {
         this(Charset.defaultCharset());
     }
 
-    /**
+    
+    
+    public int getPrefixLength() {
+		return prefixLength;
+	}
+
+	public void setPrefixLength(int prefixLength) {
+		this.prefixLength = prefixLength;
+	}
+
+	public Charset getCharset() {
+		return charset;
+	}
+
+	public FixedStringEncoder getEncoder() {
+		return encoder;
+	}
+
+	public FixedStringDecoder getDecoder() {
+		return decoder;
+	}
+
+	/**
      * Returns the allowed maximum size of an encoded string.
      * If the size of the encoded String exceeds this value, the encoder
      * will throw a {@link IllegalArgumentException}.
